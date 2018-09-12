@@ -102,3 +102,7 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# Training Data
+VOCdevkit/
+VOCtrainval_06-Nov-2007.tar
