@@ -1,20 +1,30 @@
 FROM ubuntu:16.04
 
+# ------------------------------------------------------------------------
 # Install tools to build the darknet from the source codes.
-RUN apt-get update && \
-    apt-get install -y git make gcc g++ wget
+# ------------------------------------------------------------------------
 
-# Fetch the source code from the original GitHub repository.
+RUN apt-get update && \
+    apt-get install -y git make gcc g++ wget vim-tiny
+
+# ------------------------------------------------------------------------
+# Building the Darknet from the source codes.
+# ------------------------------------------------------------------------
+
 WORKDIR /root
 RUN git clone https://github.com/pjreddie/darknet.git
-
-# After this, we work at /root/darknet.
 WORKDIR darknet
+RUN make
 
 # Comment out downloading weights file of YOLOv1 when debugging
 # because its size is 753MB.
 # RUN wget -q https://pjreddie.com/media/files/yolov1.weights
 
+# ------------------------------------------------------------------------
+# Training YOLO on VOC
+# ------------------------------------------------------------------------
+
+# Get The Pascal VOC Data
 RUN wget -q https://pjreddie.com/media/files/VOCtrainval_11-May-2012.tar && \
     wget -q https://pjreddie.com/media/files/VOCtrainval_06-Nov-2007.tar && \
     wget -q https://pjreddie.com/media/files/VOCtest_06-Nov-2007.tar && \
@@ -22,13 +32,16 @@ RUN wget -q https://pjreddie.com/media/files/VOCtrainval_11-May-2012.tar && \
     tar xf VOCtrainval_06-Nov-2007.tar && \
     tar xf VOCtest_06-Nov-2007.tar
 
+# Generate Labels for VOC
 RUN apt-get install -y python3 && \
     wget -q https://pjreddie.com/media/files/voc_label.py && \
     python3 voc_label.py && \
     cat 2007_* 2012_train.txt > train.txt
 
-# Build the darknet.
-RUN cat examples/yolo.c | (rm examples/yolo.c; sed -e "7 s/data/root\/darknet\/data/g"     > examples/yolo.c) && \
-    cat examples/yolo.c | (rm examples/yolo.c; sed -e "8 s/home\/pjreddie/root\/darknet/g" > examples/yolo.c) && \
-    make
+# Modify Cfg for Pascal Data
+RUN DATA_FILE="cfg/voc.data" && \
+    cat $DATE_FILE | (rm $DATA_FILE; sed -e "s/home\/pjreddie/root\/darknet/g" > $DATA_FILE)
+
+# Download Pretrained Convolutional Weights
+RUN wget -q https://pjreddie.com/media/files/darknet53.conv.74
 
