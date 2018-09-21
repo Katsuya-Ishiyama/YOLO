@@ -5,7 +5,7 @@ FROM ubuntu:16.04
 # ------------------------------------------------------------------------
 
 RUN apt-get update && \
-    apt-get install -y git make gcc g++ wget vim-tiny
+    apt-get install -y git make gcc g++ wget vim-tiny python3
 
 # ------------------------------------------------------------------------
 # Building the Darknet from the source codes.
@@ -33,8 +33,7 @@ RUN wget -q https://pjreddie.com/media/files/VOCtrainval_11-May-2012.tar && \
     tar xf VOCtest_06-Nov-2007.tar
 
 # Generate Labels for VOC
-RUN apt-get install -y python3 && \
-    wget -q https://pjreddie.com/media/files/voc_label.py && \
+RUN wget -q https://pjreddie.com/media/files/voc_label.py && \
     python3 voc_label.py && \
     cat 2007_* 2012_train.txt > train.txt
 
