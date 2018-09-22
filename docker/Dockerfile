@@ -5,7 +5,8 @@ FROM ubuntu:16.04
 # ------------------------------------------------------------------------
 
 RUN apt-get update && \
-    apt-get install -y git make gcc g++ wget vim-tiny python3
+    apt-get install -y git make gcc g++ wget vim-tiny python3 && \
+    apt-get install -y --fix-missing gdb
 
 # ------------------------------------------------------------------------
 # Building the Darknet from the source codes.
@@ -14,7 +15,9 @@ RUN apt-get update && \
 WORKDIR /root
 RUN git clone https://github.com/pjreddie/darknet.git
 WORKDIR darknet
-RUN make
+# Building the darknet as debug mode
+RUN cat Makefile | (rm Makefile; sed -e "5 s/DEBUG=0/DEBUG=1/g" > Makefile) && \
+    make
 
 # Comment out downloading weights file of YOLOv1 when debugging
 # because its size is 753MB.
@@ -44,3 +47,5 @@ RUN DATA_FILE="cfg/voc.data" && \
 # Download Pretrained Convolutional Weights
 RUN wget -q https://pjreddie.com/media/files/darknet53.conv.74
 
+# Display row numbers to use when debugging
+RUN echo "set number" > ~/.vimrc
