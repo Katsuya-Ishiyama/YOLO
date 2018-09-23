@@ -1,12 +1,13 @@
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 
 # ------------------------------------------------------------------------
 # Install tools to build the darknet from the source codes.
 # ------------------------------------------------------------------------
 
 RUN apt-get update && \
-    apt-get install -y git make gcc g++ wget vim-tiny python3 && \
-    apt-get install -y --fix-missing gdb
+    apt-get install -y git make gcc g++ wget vim-tiny python3 tmux
+# FIX ME: apt-get returns "Failed to fetch", I don't know why...
+# RUN apt-get install -y --fix-missing gdb
 
 # ------------------------------------------------------------------------
 # Building the Darknet from the source codes.
@@ -38,11 +39,11 @@ RUN wget -q https://pjreddie.com/media/files/VOCtrainval_11-May-2012.tar && \
 # Generate Labels for VOC
 RUN wget -q https://pjreddie.com/media/files/voc_label.py && \
     python3 voc_label.py && \
-    cat 2007_* 2012_train.txt > train.txt
+    mkdir data/voc && \
+    cat 2007_* 2012_train.txt > data/voc/train.txt
 
 # Modify Cfg for Pascal Data
-RUN DATA_FILE="cfg/voc.data" && \
-    cat $DATE_FILE | (rm $DATA_FILE; sed -e "s/home\/pjreddie/root\/darknet/g" > $DATA_FILE)
+RUN cat cfg/voc.data | (rm cfg/voc.data; sed -e "s/home\/pjreddie/root\/darknet/g" > cfg/voc.data)
 
 # Download Pretrained Convolutional Weights
 RUN wget -q https://pjreddie.com/media/files/darknet53.conv.74
