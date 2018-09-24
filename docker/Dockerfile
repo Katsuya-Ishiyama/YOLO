@@ -18,6 +18,7 @@ RUN git clone https://github.com/pjreddie/darknet.git
 WORKDIR darknet
 # Building the darknet as debug mode
 RUN cat Makefile | (rm Makefile; sed -e "5 s/DEBUG=0/DEBUG=1/g" > Makefile) && \
+    cat Makefile | (rm Makefile; sed -e "37 s/$/ -pg/g" > Makefile) && \
     make
 
 # Comment out downloading weights file of YOLOv1 when debugging
