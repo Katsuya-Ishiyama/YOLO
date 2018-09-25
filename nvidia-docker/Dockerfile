@@ -5,7 +5,8 @@ FROM nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04
 # ------------------------------------------------------------------------
 
 RUN apt-get update && \
-    apt-get install -y git make cmake gcc g++ wget vim-tiny python3 tmux unzip
+    apt-get install -y git make cmake gcc g++ wget vim-tiny python3 \
+                       tmux unzip pkg-config
 # FIX ME: apt-get returns "Failed to fetch", I don't know why...
 # RUN apt-get install -y --fix-missing gdb
 
