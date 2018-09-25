@@ -123,6 +123,7 @@ RUN git clone https://github.com/pjreddie/darknet.git
 WORKDIR darknet
 # Building the darknet as debug mode
 RUN cat Makefile | (rm Makefile; sed -e "1 s/GPU=0/GPU=1/g" > Makefile) && \
+    cat Makefile | (rm Makefile; sed -e "2 s/CUDNN=0/CUDNN=1/g" > Makefile) && \
     cat Makefile | (rm Makefile; sed -e "3 s/OPENCV=0/OPENCV=1/g" > Makefile) && \
     cat Makefile | (rm Makefile; sed -e "5 s/DEBUG=0/DEBUG=1/g" > Makefile) && \
     cat Makefile | (rm Makefile; sed -e "37 s/$/ -pg/g" > Makefile) && \
