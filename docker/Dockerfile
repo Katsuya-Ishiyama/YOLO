@@ -41,7 +41,9 @@ RUN wget -q https://pjreddie.com/media/files/VOCtrainval_11-May-2012.tar && \
 RUN wget -q https://pjreddie.com/media/files/voc_label.py && \
     python3 voc_label.py && \
     mkdir data/voc && \
-    cat 2007_* 2012_train.txt > data/voc/train.txt
+    cat 2007_* 2012_train.txt > data/voc/train_original.txt && \
+    head -n3 train_original.txt > data/voc/train.txt && \
+    head -n3 2007_test.txt > data/voc/2007_test.txt
 
 # Modify Cfg for Pascal Data
 RUN cat cfg/voc.data | (rm cfg/voc.data; sed -e "s/home\/pjreddie/root\/darknet/g" > cfg/voc.data)
