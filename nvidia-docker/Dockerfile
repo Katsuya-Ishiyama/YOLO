@@ -5,8 +5,10 @@ FROM nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04
 # ------------------------------------------------------------------------
 
 RUN apt-get update && \
-    apt-get install -y git make cmake gcc g++ wget vim-tiny python3 \
-                       tmux unzip pkg-config
+    apt-get install -y git build-essential cmake wget vim-tiny python3 \
+                       tmux unzip pkg-config libgtk2.0-dev libavcodec-dev \
+                       libavformat-dev libswscale-dev && \
+    apt-get clean
 # FIX ME: apt-get returns "Failed to fetch", I don't know why...
 # RUN apt-get install -y --fix-missing gdb
 
@@ -114,6 +116,9 @@ RUN cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=/usr/local \
 RUN cmake --build . --config Release && \
     make install
 RUN cd ~ && rm -rf /tmp/*
+
+ENV LD_LIBRARY_PATH /usr/local/lib:/usr/lib:$LD_LIBRARY_PATH
+RUN ldconfig
 
 # ------------------------------------------------------------------------
 # Building the Darknet from the source codes.
